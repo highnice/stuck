@@ -1,0 +1,164 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* สำคัญ: ป้องกันไม่ให้มี Scrollbar โผล่มาเวลารูปล้นจอ */
+}
+
+.elevator-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+   background: #000; /* พื้นหลังกันพลาด */
+}
+
+.center-content {
+  width: 100%;
+  height: 100%;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.left-door, .right-door {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%; /* แบ่งคนละครึ่งหน้า */
+  z-index: 10; /* ตัวเลขยิ่งสูง ยิ่งอยู่ข้างบน (ทับโครงลิฟต์) */
+  overflow: hidden; /* กันรูป SVG ล้นออกนอก div ประตู */
+}
+/* ประตูซ้าย: เลื่อนไปทางซ้ายจนสุดตัวมันเอง (-100%) */
+@keyframes slideOutLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* ประตูขวา: เลื่อนไปทางขวาจนสุดตัวมันเอง (100%) */
+@keyframes slideOutRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+/* จัดประตูซ้ายติดขอบซ้าย */
+.left-door {
+  left: 0;
+ animation: slideOutLeft 2s ease-in-out forwards;
+  animation-delay: 2s; /* นี่คือ After Delay 1 วิ แบบใน Figma */}
+
+/* จัดประตูขวาติดขอบขวา */
+.right-door {
+  right: 0;
+  animation: slideOutRight 2s ease-in-out forwards;
+  animation-delay: 2s; /* นี่คือ After Delay 1 วิ แบบใน Figma */}
+
+/* ปรับ SVG ข้างในประตูให้เต็มพื้นที่ div */
+.left-door svg, .right-door svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.compass-container {
+  position: absolute;
+  top: 40%;
+  left: 49%;
+  transform: translate(-50%, -50%);
+  width: 90px; /* ขนาดของเข็มทิศ */
+  height: 90px;
+  z-index: 9; 
+}
+
+
+
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+.control-panel {
+  position: absolute;
+  top: 50%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+  width: 60px; 
+  z-index: 5;
+  pointer-events: all;
+   opacity: 0; 
+     animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation-delay: 3s;
+}
+@keyframes popOut {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+}
+.submit-button {
+  position: absolute;
+  top: 70%; /* วางไว้ค่อนไปทางข้างล่างจอ */
+  left: 80%;
+  transform: translate(-50%, -50%);
+  width: 70px; /* ขนาดปุ่ม Submit */
+  z-index: 6; /* ให้อยู่เหนือแผงนิดนึง */
+  cursor: pointer;
+  
+  /* Animation แยกกันได้ */
+  opacity: 0;
+  animation: popIn 0.5s ease forwards;
+  animation-delay: 3.5s; /* ให้เด้งตามหลังแผงหลัก */
+}
+.result-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.8); /* พื้นหลังมืดลงเพื่อเน้นผลลัพธ์ */
+    display: none; /* ซ่อนไว้ก่อน */
+    justify-content: center;
+    align-items: center;
+    z-index: 7;
+}
+
+.result-content {
+   position: absolute;
+  top: 50%;
+  left: 50%;
+    background: #1a1a1a;
+    padding: 30px;
+    border: 2px solid #842b1c;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 30px rgba(132, 43, 28, 0.5);
+    
+    transform: scale(0); /* เริ่มที่ขนาด 0 */
+}
+
+/* เมื่อสั่งให้โชว์ จะเด้งขึ้นมา */
+.result-modal.show {
+    display: flex;
+}
+.result-modal.show .result-content {
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.digital-number {
+    font-size: 80px;
+    font-family: 'Courier New', Courier, monospace; /* ฟอนต์แนวตัวเลขดิจิทัล */
+    color: #ff4b2b;
+    text-shadow: 0 0 20px #ff4b2b;
+    margin: 20px 0;
+}
